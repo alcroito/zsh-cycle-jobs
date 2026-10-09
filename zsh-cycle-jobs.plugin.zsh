@@ -32,7 +32,7 @@ _fzf_job_chooser() {
 
     # Rest of your logic unchanged...
     if [[ ${#job_lines[@]} -eq 1 ]]; then
-        local job_id=$(echo "${job_lines[1]}" | awk 'match($0, /\[([0-9]+)\]/, arr) { print arr[1] }')
+        local job_id=${${job_lines[1]#\[}%%\]*}
         BUFFER="fg %${job_id}"
         zle accept-line
         return 0
@@ -42,7 +42,7 @@ _fzf_job_chooser() {
     local selected=$(printf "%s\n" "${job_lines[@]}" | fzf --prompt="Select job: ")
 
     if [[ -n "$selected" ]]; then
-        local job_id=$(echo "$selected" | awk 'match($0, /\[([0-9]+)\]/, arr) { print arr[1] }')
+        local job_id=${${selected#\[}%%\]*}
         [[ -n "$job_id" ]] && BUFFER="fg %${job_id}" && zle accept-line
     fi
 }
